@@ -66,22 +66,22 @@
 				class="h-8 w-8 rounded-full"
 				alt=""
 			/>
-			<p class="w-[170px] truncate">
+			<p class="w-[170px] truncate text-white">
 				{$accountInformation.userWalletAddress}
 			</p>
 		</div>
 	{/if}
-	<div class="absolute left-[2%] top-[2%] flex items-center justify-center gap-3">
+	<button class="absolute left-[2%] top-[2%] flex items-center justify-center gap-3">
 		<img
 			src="https://miro.medium.com/v2/resize:fit:740/1*ooOH6jo8I0ns0J-BE0SAow.jpeg"
 			class="h-14 w-14 rounded-full shadow-sm"
 			alt="Profile"
 		/>
 		<div class="flex flex-col items-start gap-1">
-			<h1 class="font-semibold">Jean-Emmanuel Perramant</h1>
+			<h1 class="font-semibold text-white">Jean-Emmanuel Perramant</h1>
 			<h3 class="text-sm text-gray-400">jperrama@gmail.com</h3>
 		</div>
-	</div>
+	</button>
 
 	{#if $count === 2}
 		<AddFile />
