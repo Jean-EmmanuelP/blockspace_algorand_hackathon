@@ -1,9 +1,9 @@
 <script>
-	import { Spinner } from 'flowbite-svelte';
-	import SuccessMint from './modals/SuccessMint.svelte';
-	import { fade } from 'svelte/transition';
+	import { fade, fly } from 'svelte/transition';
 	import { PinataSDK } from 'pinata';
 	import { env } from '$env/dynamic/public';
+	import { registeredFiles } from '$lib/writable';
+	import OpenImage from './modals/OpenImage.svelte';
 
 	let selectedFile = $state(null);
 	let fileName = $state('');
@@ -13,6 +13,8 @@
 	let isLoading = $state(false);
 	let showSuccessPopup = $state(false);
 	let showFileAnimation = $state(false);
+	let activeTab = $state('mint');
+	let selectedImageForModal = $state(null);
 
 	const pinata = new PinataSDK({
 		pinataJwt: env.PUBLIC_PINATA_JWT,
@@ -56,18 +58,18 @@
 			try {
 				const file = new File([selectedFile], fileName, { type: selectedFile.type });
 				const upload = await pinata.upload.file(file);
-				console.log('Fichier téléversé sur Pinata :', upload);
+				console.log('File uploaded to Pinata:', upload);
 
 				const contractData = {
 					name: title,
-					description: 'Fichier sécurisé sur Algorand',
+					description: 'Secure file on Algorand',
 					image: `https://gateway.pinata.cloud/ipfs/${upload.cid}`,
 					properties: {
 						date: new Date().toISOString()
 					}
 				};
 
-				// Simulation d'enregistrement sur la blockchain
+				// Simulating blockchain registration
 				await new Promise((resolve) => setTimeout(resolve, 2000));
 
 				showSuccessPopup = true;
@@ -79,13 +81,13 @@
 					resetInputs();
 				}, 3000);
 			} catch (error) {
-				console.error('Erreur lors du téléversement du fichier :', error);
-				alert('Échec du téléversement du fichier. Veuillez réessayer.');
+				console.error('Error uploading file:', error);
+				alert('File upload failed. Please try again.');
 			} finally {
 				isLoading = false;
 			}
 		} else {
-			alert('Veuillez ajouter un fichier et entrer un titre.');
+			alert('Please add a file and enter a title.');
 		}
 	}
 
@@ -95,78 +97,128 @@
 		isFileAdded = false;
 		title = '';
 	}
+
+	function openImageModal(image) {
+		console.log('you just clicked with this image: ', image);
+		selectedImageForModal = image;
+	}
+
+	function closeImageModal() {
+		selectedImageForModal = null;
+	}
 </script>
 
-<div class="mx-auto w-full max-w-2xl rounded-xl bg-gray-900 p-6 shadow-2xl">
-	<h2 class="mb-6 text-center text-2xl font-bold text-blue-400">Mint your contract</h2>
-
-	<div class="mb-6 grid grid-cols-2 gap-4">
+<div class="mx-auto w-full max-w-4xl rounded-xl bg-gray-900 p-6 shadow-2xl">
+	<div class="mb-6 flex justify-center space-x-4">
 		<button
-			class="w-full rounded-lg bg-gradient-to-r from-purple-600 to-blue-600 px-4 py-3 text-white shadow-lg"
+			class="rounded-full px-6 py-2 text-lg font-semibold transition-all duration-300 ease-in-out {activeTab ===
+			'mint'
+				? 'bg-purple-600 text-white'
+				: 'bg-gray-800 text-purple-400 hover:bg-gray-700'}"
+			on:click={() => (activeTab = 'mint')}
 		>
-			🗃️ Mes fichiers
+			💎 Mint Contract
 		</button>
-		<label
-			class="w-full cursor-pointer rounded-lg bg-gradient-to-r from-green-500 to-teal-500 px-4 py-3 text-center text-white shadow-lg"
+		<button
+			class="rounded-full px-6 py-2 text-lg font-semibold transition-all duration-300 ease-in-out {activeTab ===
+			'minted'
+				? 'bg-blue-600 text-white'
+				: 'bg-gray-800 text-blue-400 hover:bg-gray-700'}"
+			on:click={() => (activeTab = 'minted')}
 		>
-			<input
-				type="file"
-				onchange={handleFileSelect}
-				disabled={isFileAdded}
-				class="hidden"
-				accept="image/*"
-			/>
-			➕ Ajouter un fichier
-		</label>
+			📃️ My Minted Contracts
+		</button>
 	</div>
 
-	<div
-		id="dropzone"
-		class="mb-6 rounded-lg border-2 border-dashed border-blue-400 p-8 text-center"
-		class:bg-blue-900={dragActive}
-		class:bg-gray-800={!dragActive}
-		ondragenter={handleDragEnter}
-		ondragleave={handleDragLeave}
-		ondrop={handleDrop}
-	>
-		{#if isFileAdded}
-			<div in:fade={{ duration: 150 }} class="flex items-center space-x-4 bg-gray-800 p-3">
-				<a href={selectedFile} target="_blank">
-					<img src={selectedFile} alt="Aperçu" class="h-10 w-10 rounded object-cover" />
-				</a>
-				<a href={selectedFile} target="_blank" class="text-blue-400 underline">{fileName}</a>
-				<button onclick={resetInputs} class="text-red-500">✖</button>
+	{#if activeTab === 'mint'}
+		<div in:fade={{ duration: 300 }} class="rounded-lg bg-gray-800 p-6">
+			<h2 class="mb-4 text-2xl font-bold text-purple-400">Mint New Contract</h2>
+			<div
+				id="dropzone"
+				class="mb-6 rounded-lg border-2 border-dashed border-purple-400 p-8 text-center transition-all duration-300 ease-in-out"
+				class:bg-purple-900={dragActive}
+				class:bg-gray-700={!dragActive}
+				on:dragenter={handleDragEnter}
+				on:dragleave={handleDragLeave}
+				on:drop={handleDrop}
+				on:click={() => document.getElementById('fileInput').click()}
+			>
+				{#if isFileAdded}
+					<div
+						in:fade={{ duration: 150 }}
+						class="flex items-center space-x-4 rounded-lg bg-gray-700 p-3"
+					>
+						<!-- <a href={selectedFile} target="_blank" rel="noopener noreferrer"> -->
+						<img
+							src={selectedFile}
+							alt="Preview"
+							class="h-10 w-10 rounded object-cover"
+							on:click={() => openImageModal(selectedFile)}
+						/>
+						<!-- </a> -->
+						<!-- <a
+							href={selectedFile}
+							target="_blank"
+							rel="noopener noreferrer"
+							class="text-purple-400 underline">{fileName}</a
+						> -->
+						<button class="pl-1 text-white" on:click={() => openImageModal(selectedFile)}>
+							{fileName}
+						</button>
+						<button on:click={resetInputs} class="text-red-500 hover:text-red-400">✖</button>
+					</div>
+				{:else}
+					<p class="text-purple-300">Drag and drop your file here or click to select</p>
+					<input
+						type="file"
+						id="fileInput"
+						on:change={handleFileSelect}
+						class="hidden"
+						accept="image/*"
+					/>
+				{/if}
 			</div>
-		{:else}
-			<p class="text-blue-300">
-				Glissez-déposez votre fichier ici ou cliquez sur 'Ajouter un fichier'
-			</p>
-		{/if}
-	</div>
 
-	{#if isFileAdded}
-		<div class="mb-6 bg-gray-800 p-4">
-			<h3 class="text-xl font-semibold text-blue-400">Détails du contrat</h3>
-			<input
-				type="text"
-				bind:value={title}
-				placeholder="Titre"
-				class="mt-4 w-full rounded-md bg-gray-700 px-3 py-2 text-white"
-			/>
+			{#if isFileAdded}
+				<div class="mb-6 rounded-lg bg-gray-700 p-4">
+					<h3 class="text-xl font-semibold text-purple-400">Contract Details</h3>
+					<input
+						type="text"
+						bind:value={title}
+						placeholder="Title"
+						class="mt-4 w-full rounded-md bg-gray-600 px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+					/>
+				</div>
+				<button
+					on:click={handleValidate}
+					disabled={!selectedFile || !title || isLoading}
+					class="w-full rounded-lg bg-gradient-to-r from-purple-500 to-indigo-600 px-4 py-3 text-white transition-all duration-300 ease-in-out hover:from-purple-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50"
+				>
+					{#if isLoading}
+						<span class="inline-block animate-spin">🔄</span>
+					{:else}
+						Mint Contract
+					{/if}
+				</button>
+			{/if}
+		</div>
+	{:else if activeTab === 'minted'}
+		<div in:fade={{ duration: 300 }} class="rounded-lg bg-gray-800 p-6">
+			<h2 class="mb-4 text-2xl font-bold text-blue-400">My Minted Contracts</h2>
+			<!-- Add your minted contracts list component here -->
+			<p class="text-gray-400">Your minted contracts will be displayed here.</p>
 		</div>
 	{/if}
-
-	<button
-		onclick={handleValidate}
-		disabled={!selectedFile || !title}
-		class="w-full rounded-lg bg-gradient-to-r from-yellow-400 to-orange-500 px-4 py-3 text-white"
-	>
-		{#if isLoading}
-			<Spinner size={4} />
-		{:else}
-			Enregistrer sur la blockchain
-		{/if}
-	</button>
-
-	<SuccessMint showModal={showSuccessPopup} />
 </div>
+
+{#if showSuccessPopup}
+	<div
+		in:fly={{ y: 50, duration: 500 }}
+		out:fade={{ duration: 300 }}
+		class="fixed bottom-4 right-4 rounded-lg bg-green-600 p-4 text-white shadow-lg"
+	>
+		Contract successfully minted!
+	</div>
+{/if}
+
+<OpenImage selectedImage={selectedImageForModal} on:closeImage={closeImageModal} />
