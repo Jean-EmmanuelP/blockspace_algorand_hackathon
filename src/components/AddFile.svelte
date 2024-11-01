@@ -72,6 +72,32 @@
 				// Simulating blockchain registration
 				await new Promise((resolve) => setTimeout(resolve, 2000));
 
+				// Push the given NFTs into registeredFiles
+				const nftData = {
+					nfts: [
+						{
+							asset_id: 728264045,
+							title: 'NFT #728264045',
+							mint_date: '2024-11-01T15:30:45.123456',
+							mint_address: 'UKSXGE7K4WDVSKRXA63Q7ANEHPJSFAGXBT3YJ5OM76E24NATQ5N3PNJNNI',
+							metadata_url:
+								'https://gateway.pinata.cloud/ipfs/QmTURg66KbuZqFgajPhLnRaaMnpCVZcmhR1xgc3xaGGzUL',
+							explorer_url: 'https://testnet.explorer.perawallet.app/asset/728264045'
+						},
+						{
+							asset_id: 728264046,
+							title: 'NFT #728264046',
+							mint_date: '2024-11-01T15:45:12.345678',
+							mint_address: 'UKSXGE7K4WDVSKRXA63Q7ANEHPJSFAGXBT3YJ5OM76E24NATQ5N3PNJNNI',
+							metadata_url:
+								'https://gateway.pinata.cloud/ipfs/QmTURg66KbuZqFgajPhLnRaaMnpCVZcmhR1xgc3xaGGzUL',
+							explorer_url: 'https://testnet.explorer.perawallet.app/asset/728264046'
+						}
+					]
+				};
+
+				$registeredFiles.push(...nftData.nfts);
+				activeTab = 'minted';
 				showSuccessPopup = true;
 				showFileAnimation = true;
 
@@ -99,8 +125,10 @@
 	}
 
 	function openImageModal(image) {
-		console.log('you just clicked with this image: ', image);
-		selectedImageForModal = image;
+		if (image) {
+			console.log('you just clicked with this image: ', image);
+			selectedImageForModal = image;
+		}
 	}
 
 	function closeImageModal() {
@@ -153,16 +181,12 @@
 							src={selectedFile}
 							alt="Preview"
 							class="h-10 w-10 rounded object-cover"
-							on:click={() => openImageModal(selectedFile)}
+							on:click={() => selectedFile && openImageModal(selectedFile)}
 						/>
-						<!-- </a> -->
-						<!-- <a
-							href={selectedFile}
-							target="_blank"
-							rel="noopener noreferrer"
-							class="text-purple-400 underline">{fileName}</a
-						> -->
-						<button class="pl-1 text-white" on:click={() => openImageModal(selectedFile)}>
+						<button
+							class="pl-1 text-white"
+							on:click={() => selectedFile && openImageModal(selectedFile)}
+						>
 							{fileName}
 						</button>
 						<button on:click={resetInputs} class="text-red-500 hover:text-red-400">✖</button>
@@ -205,8 +229,20 @@
 	{:else if activeTab === 'minted'}
 		<div in:fade={{ duration: 300 }} class="rounded-lg bg-gray-800 p-6">
 			<h2 class="mb-4 text-2xl font-bold text-blue-400">My Minted Contracts</h2>
-			<!-- Add your minted contracts list component here -->
-			<p class="text-gray-400">Your minted contracts will be displayed here.</p>
+			{#each $registeredFiles as nft}
+				<div class="mb-4 rounded-lg bg-gray-700 p-4">
+					<h3 class="text-xl font-semibold text-white">{nft.title}</h3>
+					<p class="text-gray-300">Asset ID: {nft.asset_id}</p>
+					<p class="text-gray-300">Mint Date: {nft.mint_date}</p>
+					<p class="text-gray-300">Mint Address: {nft.mint_address}</p>
+					<a href={nft.metadata_url} target="_blank" class="text-blue-400 hover:underline"
+						>Metadata URL</a
+					><br />
+					<a href={nft.explorer_url} target="_blank" class="text-blue-400 hover:underline"
+						>Explorer URL</a
+					>
+				</div>
+			{/each}
 		</div>
 	{/if}
 </div>
