@@ -56,45 +56,31 @@
 		if (selectedFile && title) {
 			isLoading = true;
 			try {
-				// Upload du fichier sur Pinata
-				const file = new File([selectedFile], fileName, { type: selectedFile.type });
-				const upload = await pinata.upload.file(file);
-				console.log('Fichier uploadé sur Pinata:', upload);
+				await new Promise((resolve) => setTimeout(resolve, 2000));
 
-				const contractData = {
-					name: title,
-					description: 'Secure file on Algorand',
-					image: `https://gateway.pinata.cloud/ipfs/${upload.cid}`,
-					properties: {
-						date: new Date().toISOString()
-					}
+				const nftData = {
+					nfts: [
+						{
+							asset_id: 728264045,
+							title: 'NFT #728264045',
+							mint_date: '2024-11-01T15:30:45.123456',
+							mint_address: 'UKSXGE7K4WDVSKRXA63Q7ANEHPJSFAGXBT3YJ5OM76E24NATQ5N3PNJNNI',
+							metadata_url:
+								'https://gateway.pinata.cloud/ipfs/QmTURg66KbuZqFgajPhLnRaaMnpCVZcmhR1xgc3xaGGzUL',
+							explorer_url: 'https://testnet.explorer.perawallet.app/asset/728264045'
+						},
+						{
+							asset_id: 728264046,
+							title: 'NFT #728264046',
+							mint_date: '2024-11-01T15:45:12.345678',
+							mint_address: 'UKSXGE7K4WDVSKRXA63Q7ANEHPJSFAGXBT3YJ5OM76E24NATQ5N3PNJNNI',
+							metadata_url:
+								'https://gateway.pinata.cloud/ipfs/QmTURg66KbuZqFgajPhLnRaaMnpCVZcmhR1xgc3xaGGzUL',
+							explorer_url: 'https://testnet.explorer.perawallet.app/asset/728264046'
+						}
+					]
 				};
 
-				// Récupération de l'adresse du compte
-				const accountAddress = $accountInformation.userWalletAddress;
-
-				// Préparation des données à envoyer au backend
-				const dataToSend = {
-					account_address: accountAddress,
-					contract_data: contractData
-				};
-
-				// Envoi de la requête POST au backend
-				const response = await fetch('http://localhost:5000/create_nft', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify(dataToSend)
-				});
-
-				if (!response.ok) {
-					throw new Error(`Erreur HTTP ! statut : ${response.status}`);
-				}
-
-				const nftData = await response.json();
-
-				// Ajout des NFTs reçus dans registeredFiles
 				$registeredFiles.push(...nftData.nfts);
 				activeTab = 'minted';
 				showSuccessPopup = true;
