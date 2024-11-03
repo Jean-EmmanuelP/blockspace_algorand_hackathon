@@ -68,16 +68,16 @@
 							metadata_url:
 								'https://gateway.pinata.cloud/ipfs/QmTURg66KbuZqFgajPhLnRaaMnpCVZcmhR1xgc3xaGGzUL',
 							explorer_url: 'https://testnet.explorer.perawallet.app/asset/728264045'
-						},
-						{
-							asset_id: 728264046,
-							title: 'NFT #728264046',
-							mint_date: '2024-11-01T15:45:12.345678',
-							mint_address: 'UKSXGE7K4WDVSKRXA63Q7ANEHPJSFAGXBT3YJ5OM76E24NATQ5N3PNJNNI',
-							metadata_url:
-								'https://gateway.pinata.cloud/ipfs/QmTURg66KbuZqFgajPhLnRaaMnpCVZcmhR1xgc3xaGGzUL',
-							explorer_url: 'https://testnet.explorer.perawallet.app/asset/728264046'
 						}
+						// {
+						// 	asset_id: 728264046,
+						// 	title: 'NFT #728264046',
+						// 	mint_date: '2024-11-01T15:45:12.345678',
+						// 	mint_address: 'UKSXGE7K4WDVSKRXA63Q7ANEHPJSFAGXBT3YJ5OM76E24NATQ5N3PNJNNI',
+						// 	metadata_url:
+						// 		'https://gateway.pinata.cloud/ipfs/QmTURg66KbuZqFgajPhLnRaaMnpCVZcmhR1xgc3xaGGzUL',
+						// 	explorer_url: 'https://testnet.explorer.perawallet.app/asset/728264046'
+						// }
 					]
 				};
 
@@ -130,7 +130,7 @@
 				: 'bg-gray-800 text-purple-400 hover:bg-gray-700'}"
 			on:click={() => (activeTab = 'mint')}
 		>
-			💎 Mint Contract
+			💎 Mint NFT
 		</button>
 		<button
 			class="rounded-full px-6 py-2 text-lg font-semibold transition-all duration-300 ease-in-out {activeTab ===
@@ -139,13 +139,13 @@
 				: 'bg-gray-800 text-blue-400 hover:bg-gray-700'}"
 			on:click={() => (activeTab = 'minted')}
 		>
-			📃️ My Minted Contracts
+			📃️ My Minted NFT
 		</button>
 	</div>
 
 	{#if activeTab === 'mint'}
 		<div in:fade={{ duration: 300 }} class="rounded-lg bg-gray-800 p-6">
-			<h2 class="mb-4 text-2xl font-bold text-purple-400">Mint New Contract</h2>
+			<h2 class="mb-4 text-2xl font-bold text-purple-400">Mint New NFT</h2>
 			<div
 				id="dropzone"
 				class="mb-6 rounded-lg border-2 border-dashed border-purple-400 p-8 text-center transition-all duration-300 ease-in-out"
@@ -190,7 +190,7 @@
 
 			{#if isFileAdded}
 				<div class="mb-6 rounded-lg bg-gray-700 p-4">
-					<h3 class="text-xl font-semibold text-purple-400">Contract Details</h3>
+					<h3 class="text-xl font-semibold text-purple-400">NFT Details</h3>
 					<input
 						type="text"
 						bind:value={title}
@@ -206,14 +206,14 @@
 					{#if isLoading}
 						<span class="inline-block animate-spin">🔄</span>
 					{:else}
-						Mint Contract
+						Mint NFT
 					{/if}
 				</button>
 			{/if}
 		</div>
 	{:else if activeTab === 'minted'}
 		<div in:fade={{ duration: 300 }} class="rounded-lg bg-gray-800 p-6">
-			<h2 class="mb-4 text-2xl font-bold text-blue-400">My Minted Contracts</h2>
+			<h2 class="mb-4 text-2xl font-bold text-blue-400">My Minted NFT</h2>
 			{#each $registeredFiles as nft}
 				<div class="mb-4 rounded-lg bg-gray-700 p-4">
 					<h3 class="text-xl font-semibold text-white">{nft.title}</h3>
