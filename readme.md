@@ -1,8 +1,24 @@
-This is the main branch, just working as a test for the demo.
-The Should_work branch closely works but it seems to have a problem with the pera wallet connection.
+Overview
 
-We wanted to use pera wallet identification and then IPFS but as we are newcomers , it is hard to code. We learned much already.
-You can launch the front with bun i && bun dev --host in the front folder but you will need depedencies. You can launch the front with the network adress in your browser.
-Our back API is python / flask, you can launch it with Python3 app.py
+This project features a front end built with Svelte and TailwindCSS, and a back end API built with Python Flask. We aimed to implement Pera Wallet identification and IPFS integration. While the Should_work branch is close to functional, it has an issue with the Pera Wallet connection. Currently, transactions are hardcoded with a mnemonic phrase (not secure).
 
-For now we hardcoded the transaction with mnemonic phrase so it is not secured. We would have needed a few days more.
+Getting Started
+
+Front End
+
+1.	Navigate to the front folder.
+2.	Install dependencies and start the development server:
+
+  	    bun i
+        bun dev --host
+  
+4.	Access the front end via the network address in your browser.
+
+Back End
+
+1.	Navigate to the back end folder.
+2.	Start the Flask API:
+
+  	    python3 app.py
+
+Note: The back end is not connected to the front end at this time.
