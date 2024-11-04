@@ -13,21 +13,7 @@ We have learned a lot about the blockchain ecosystem and Algorand.
 
 Getting Started
 
-Front End
+Run Script:
 
-1.	Navigate to the front folder.
-2.	Install dependencies and start the development server:
-
-  	    bun i
-        bun dev --host
-  
-4.	Access the front end via the network address in your browser.
-
-Back End
-
-1.	Navigate to the back end folder.
-2.	Start the Flask API:
-
-  	    python3 app.py
-
-Note: The back end is not connected to the front end at this time.
+      chmod +x start.sh
+      ./start.sh
